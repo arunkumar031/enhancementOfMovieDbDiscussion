@@ -1,8 +1,9 @@
 import React from 'react'
 
 const MovieContext = React.createContext({
-  input: '',
   searchInput: '',
+  searchMoviesList: [],
+  apiStatus: '',
   onChangeSearchInput: () => {},
   onClickSearchBtn: () => {},
 })

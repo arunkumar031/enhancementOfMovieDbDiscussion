@@ -1,40 +1,38 @@
-import {Component} from 'react'
+import Loader from 'react-loader-spinner'
 
 import MovieCard from '../MovieCard'
+import Navbar from '../Navbar'
 import MovieContext from '../../context/movieContext'
 
-class SearchedMovies extends Component {
-  state = {moviesList: []}
+const SearchedMovies = () => (
+  <MovieContext.Consumer>
+    {value => {
+      const {apiStatus, searchMoviesList} = value
 
-  componentDidMount() {
-    this.getData()
-  }
-
-  getData = async () => {
-    const {input} = this.props
-    const response = await fetch(
-      `https://api.themoviedb.org/3/search/movie?api_key=a3f2c13e5f49ad957ea405931074c495&language=en-US&query=${input}&page=1`,
-    )
-    const data = await response.json()
-    const moviesList = data.results
-    this.setState({moviesList})
-  }
-
-  render() {
-    const renderMovies = () => {
-      const {moviesList} = this.state
-      console.log(moviesList)
-      return (
-        <ul className="movies-list">
-          {moviesList.map(each => (
-            <MovieCard key={each.id} details={each} />
-          ))}
-        </ul>
+      const renderMovies = () => (
+        <>
+          <ul className="movies-list">
+            {searchMoviesList.map(each => (
+              <MovieCard key={each.id} details={each} />
+            ))}
+          </ul>
+        </>
       )
-    }
 
-    return <div>{renderMovies()}</div>
-  }
-}
+      const renderLoadingView = () => (
+        <div>
+          <Loader type="ThreeDots" color="#0b69ff" height="50" width="50" />
+        </div>
+      )
+
+      if (apiStatus === 'IN_PROGRESS') {
+        return renderLoadingView()
+      }
+      return <div>{renderMovies()}</div>
+    }}
+  </MovieContext.Consumer>
+)
 
 export default SearchedMovies
+
+// const {input} = this.props

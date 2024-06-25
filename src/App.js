@@ -14,39 +14,56 @@ import './App.css'
 
 // write your code here
 class App extends Component {
-  state = {input: '', searchInput: ''}
+  state = {searchInput: '', apiStatus: '', searchMoviesList: []}
 
   onChangeInput = searchInput => {
     this.setState({searchInput})
   }
 
-  onClickSearchBtn = () => {
+  getUpdatedData = data => ({
+    totalPages: data.total_pages,
+    totalResults: data.total_results,
+    results: data.results.map(each => ({
+      id: each.id,
+      posterPath: `https://image.tmdb.org/t/p/w500/${each.poster_path}`,
+      voteAverage: each.vote_average,
+      title: each.title,
+    })),
+  })
+
+  onClickSearchBtn = async () => {
+    this.setState({apiStatus: 'IN_PROGRESS'})
     const {searchInput} = this.state
-    this.setState({input: searchInput, searchInput: ''})
+    const response = await fetch(
+      `https://api.themoviedb.org/3/search/movie?api_key=a3f2c13e5f49ad957ea405931074c495&language=en-US&query=${searchInput}&page=1`,
+    )
+    const data = await response.json()
+    if (response.ok === true) {
+      const newData = this.getUpdatedData(data)
+      this.setState({apiStatus: 'SUCCESS', searchMoviesList: newData.results})
+    }
   }
 
   render() {
-    const {input, searchInput} = this.state
+    const {searchInput, apiStatus, searchMoviesList} = this.state
     return (
       <MovieContext.Provider
         value={{
+          searchMoviesList,
+          apiStatus,
           searchInput,
-          input,
           onChangeSearchInput: this.onChangeInput,
           onClickSearchBtn: this.onClickSearchBtn,
         }}
       >
         <Navbar />
-        {input ? (
-          <SearchedMovies input={input} />
-        ) : (
-          <Switch>
-            <Route exact path="/" component={Popular} />
-            <Route exact path="/top-rated" component={TopRated} />
-            <Route exact path="/upcoming" component={Upcoming} />
-            <Route exact path="/movie/:id" component={MovieDetails} />
-          </Switch>
-        )}
+        <Switch>
+          <Route exact path="/" component={Popular} />
+          <Route exact path="/top-rated" component={TopRated} />
+          <Route exact path="/upcoming" component={Upcoming} />
+          <Route exact path="/movie/:id" component={MovieDetails} />
+          <Route exact path="/search/movie" component={SearchedMovies} />
+        </Switch>
       </MovieContext.Provider>
     )
   }
