@@ -1,5 +1,8 @@
 .movie-card {
-  width: 350px;
-  margin: 5px;
-  margin-bottom: 5px;
+  width: 200px;
+  height: 300px;
+}
+.movie-img {
+  width: 100px;
+  height: 100px;
 }

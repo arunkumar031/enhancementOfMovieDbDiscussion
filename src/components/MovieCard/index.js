@@ -7,7 +7,7 @@ const MovieCard = props => {
 
   return (
     <li className="movie-card">
-      <img className="movie-poster" src={posterPath} alt={title} />
+      <img className="movie-img" src={posterPath} alt={title} />
       <p>{title}</p>
       <p>Rating: {voteAverage}</p>
       <Link to={`/movie/${id}`}>

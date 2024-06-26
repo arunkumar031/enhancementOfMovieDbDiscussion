@@ -14,7 +14,12 @@ import './App.css'
 
 // write your code here
 class App extends Component {
-  state = {searchInput: '', apiStatus: '', searchMoviesList: []}
+  state = {
+    searchInput: '',
+    apiStatus: '',
+    searchMoviesList: [],
+    searchMoviesData: {},
+  }
 
   onChangeInput = searchInput => {
     this.setState({searchInput})
@@ -40,15 +45,25 @@ class App extends Component {
     const data = await response.json()
     if (response.ok === true) {
       const newData = this.getUpdatedData(data)
-      this.setState({apiStatus: 'SUCCESS', searchMoviesList: newData.results})
+      this.setState({
+        apiStatus: 'SUCCESS',
+        searchMoviesList: newData.results,
+        searchMoviesData: newData,
+      })
     }
   }
 
   render() {
-    const {searchInput, apiStatus, searchMoviesList} = this.state
+    const {
+      searchInput,
+      apiStatus,
+      searchMoviesList,
+      searchMoviesData,
+    } = this.state
     return (
       <MovieContext.Provider
         value={{
+          searchMoviesData,
           searchMoviesList,
           apiStatus,
           searchInput,
